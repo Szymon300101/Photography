@@ -25,3 +25,8 @@ body {
   background-color: #292929 !important;
   color: #D4D4D4 !important;
 }
+
+a{
+  font-size: 15px;
+  text-decoration:none;
+}
