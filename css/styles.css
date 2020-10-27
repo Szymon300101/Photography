@@ -526,3 +526,17 @@ img::-moz-selection {
 .margin-top{
     margin-top: 50px;
 }
+
+.gallery-view-scaling{
+    margin-top: 60px;
+    padding-bottom:10px;
+}
+
+.thumbnail{
+    border: none;
+    border-radius: 0px;
+}
+
+.thumbnailContainer{
+    padding-top:5px !important;
+}
