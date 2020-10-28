@@ -528,8 +528,15 @@ img::-moz-selection {
 }
 
 .gallery-view-scaling{
+    padding-top: 105px !important;
+}
+
+.lateral-nav-container{
     margin-top: 60px;
-    padding-bottom:10px;
+}
+
+#loupeCloseButton{
+    margin-top: 70px;
 }
 
 .thumbnail{
