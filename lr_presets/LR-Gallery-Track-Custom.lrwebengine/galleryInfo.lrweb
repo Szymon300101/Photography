@@ -1,0 +1,286 @@
+--[[
+
+galleryInfo.lrweb
+This file specifies the development environment within Lightroom.
+For this sample we have defined sizes for large and thumbnail images which will be used in the large.html
+and grid.html pages when displaying the selected photos.
+
+The views table creates the panel entries available within the Lightroom UI.  For this sample the
+user can dynamically edit the site title of the website before it is published.
+
+--------------------------------------------------------------------------------
+
+ADOBE SYSTEMS INCORPORATED
+Copyright 2014 Adobe Systems Incorporated
+All Rights Reserved.
+
+NOTICE: Adobe permits you to use, modify, and distribute this file in accordance
+with the terms of the Adobe license agreement accompanying it. If you have received
+this file from a source other than Adobe, then your use, modification, or distribution
+of it requires the prior written permission of Adobe.
+
+]]
+
+local warningFontName, warningFontSize
+
+if MAC_ENV then
+    warningFontName = LOC "$$$/locale_metric/Mac/Panel/Content/Italic/FontName=MyriadWebPro-Italic"
+    warningFontSize = LOC "$$$/locale_metric/Mac/Panel/SmallBodyText/SmallFontSize=11"
+else
+    warningFontName = LOC "$$$/locale_metric/Win/Panel/Content/Italic/FontName=MyriadWebPro-Italic"
+    warningFontSize = LOC "$$$/locale_metric/Win/Panel/SmallBodyText/SmallFontSize=10"
+end
+
+local warningFont = {
+    name = warningFontName,
+    size = tonumber( warningFontSize ),
+}
+
+local useMultiBind = true
+
+return {
+    LrSdkVersion = 2.0,
+    LrSdkMinimumVersion = 2.0,
+    title = LOC "$$$/AgWPG/Templates/HTML/Track/Title=Custom Track Gallery",
+    id = "com.adobe.wpg.templates.html5.track-custom",
+    galleryType = "lua",
+    maximumGallerySize = 10000,
+    aboutBoxFile = "about.html",
+    supportsLiveUpdate = true,
+    
+    model = {
+
+        ["lightroomApplication.jpegQuality"] = 80,
+        ["lightroomApplication.useWatermark"] = true,
+        ["lightroomApplication.watermarkID"] = "",
+        ["lightroomApplication.outputSharpeningOn"] = true,
+        ["lightroomApplication.outputSharpening"] = 2,
+        
+        ["metadata.galleryTitle.value"] = LOC "$$$/AgWPG/Templates/Track/Info/GalleryTitle=Lightroom Gallery", -- default value for the siteTitle variable
+        ["metadata.rowHeight.value"] = 213,
+        ["metadata.rowSpacing.value"] = "sm", -- default to the "Medium" size
+		
+		["constants.galleryAuthor.by"] = LOC "$$$/AgWPG/Templates/Track/Constants/GalleryAuthor/By=by",
+
+        ["nonCSS.galleryAuthor.value"] = "",
+        ["nonCSS.galleryAuthor.url"] = "",
+        ["nonCSS.tracking"] = false,
+        ["nonCSS.imageBase"] = "images",    -- when translated to html, the images will be in a root folder 'content'
+        ["nonCSS.showHeader"] = true,
+        ["nonCSS.floatingHeader"] = false,
+        ["nonCSS.pagination"] = "scroll",
+
+        ["photoSizes.large.width"] = 2400,
+        ["photoSizes.large.height"] = 1200,
+        ["photoSizes.large.maxWidth"] = 2560,
+        ["photoSizes.large.maxHeight"] = 1440,
+        ["photoSizes.large.directory"] = "large",
+		["photoSizes.large.metadataExportMode"] = useMultiBind and "copyright"
+			or function() return photoSizes.thumb.metadataExportMode end,
+
+        ["appearance.html.cssID"] = "html",
+        ["appearance.html.background-color"] = "#282828",
+
+        ["appearance.body.cssID"] = "body",
+        ["appearance.body.background-color"] = "#282828",
+        ["appearance.body.color"] = "#D3D3D3",
+
+        ["appearance.header_background.cssID"] = "header div.background",
+        ["appearance.header_background.background-color"] = "#282828",
+
+        ["appearance.icons.cssID"] = ".custom-colorable",
+        ["appearance.icons.fill"] = "#D3D3D3",
+        
+        ["appearance.thumbnail.cssID"] = ".thumb-img",
+        ["appearance.thumbnail.border-color"] = "#282828",
+
+        ["appearance.loupeContainer_background.cssID"] = "#loupeContainer div.background",
+        ["appearance.loupeContainer_background.background-color"] = "#282828",
+        
+        ["photoSizes.thumb.height"] = 400,
+        ["photoSizes.thumb.width"] = 400,
+        ["photoSizes.thumb.metadataExportMode"] = "copyright", -- add copyright to images when published
+        ["photoSizes.thumb.directory"] = "thumbnails",
+
+        ["perImageSetting.description"] = {
+            enabled = true,
+            value = "{{com.adobe.caption}}",
+            title = LOC "$$$/WPG/HTML/CSS/properties/ImageCaption=Caption",
+        },
+
+        ["perImageSetting.title"] = {
+            enabled = false,
+            value = "{{com.adobe.title}}",
+            title = LOC "$$$/WPG/HTML/CSS/properties/ImageTitle=Title",
+        },
+        
+    },
+
+    iconicPreview = {
+        flashMovie = "track_html",
+        flashvars = function()
+            local iconicData = {
+                gallery_id = "track_html",
+                bodyBackgroundColor = appearance.body[ "background-color" ],
+                foregroundColor = appearance.body.color,
+                rowHeight = metadata.rowHeight.value,
+                rowSpacing = metadata.rowSpacing.value,
+                showHeader = nonCSS.showHeader,
+            }
+            return iconicData
+        end,
+    },
+    
+    views = function( controller, f )
+
+        local LrView = import "LrView"
+        local LrBinding = import "LrBinding"
+        local bind = LrView.bind
+        local multibind = f.multibind
+
+        return {
+            -- "Site Info" panel
+            labels = f:panel_content {
+                bindToObject = controller,
+                f:subdivided_sections {
+                    f:labeled_text_input  {
+                        title = LOC "$$$/AgWPG/Templates/HTML/Panel/Info/GalleryTitle=Gallery Title",
+                        value = bind "metadata.galleryTitle.value",
+                    },
+                    f:labeled_text_input  {
+                        title = LOC "$$$/AgWPG/Templates/HTML/Panel/Info/GalleryAuthor=Gallery Author",
+                        value = bind "nonCSS.galleryAuthor.value",
+                    },
+                    f:labeled_text_input  {
+                        title = LOC "$$$/AgWPG/Templates/HTML/Panel/Info/AuthorURL=Gallery Author URL",
+                        value = bind "nonCSS.galleryAuthor.url",
+                    },
+                },
+            },
+            -- "Color Palette" panel
+            colorPalette = f:panel_content {
+                bindToObject = controller,
+                f:subdivided_sections {
+                    f:color_content_column {
+                        f:label_and_color_row {
+                            color = multibind {
+                                "appearance.html.background-color",
+                                "appearance.body.background-color",
+                                "appearance.header_background.background-color",
+                                "appearance.loupeContainer_background.background-color",
+                                "appearance.thumbnail.border-color",
+                            },
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Colors/Background=Background",
+                        },
+                        f:label_and_color_row {
+                            color = bind "appearance.body.color",
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Colors/Text=Text",
+                        },
+                        f:label_and_color_row {
+                            color = bind "appearance.icons.fill",
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Colors/Icons=Icons",
+                        },
+                    },
+                },
+            },
+            -- "Appearance" panel
+            appearanceConfiguration = f:panel_content {
+                bindToObject = controller,
+                f:subdivided_sections {
+                    f:header_section_label {
+                        title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/Settings=Common Settings",
+                    },
+                    f:content_section {
+                        f:slider_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowHeight=Row Height:",
+                            value = bind "metadata.rowHeight.value",
+                            unit = "",
+                            max = 400,
+                            min = 100,
+                            width_in_digits = 3,
+                            precision = 10,
+                        },
+                    },
+                    f:content_section {
+                        ui.popup_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowSpacing=Row Spacing:", 
+                            bindingValue = "metadata.rowSpacing.value",
+                            items = {
+                                        { title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowSpacing/OptionNone=None", value = "none" },
+                                        { title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowSpacing/OptionSmall=Small", value = "sm" }, 
+                                        { title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowSpacing/OptionMedium=Medium", value = "md" }, 
+                                        { title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/RowSpacing/OptionLarge=Large", value = "lg" }
+                                    },
+                        },
+                    },
+                    f:content_section {
+                        f:checkbox_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/ShowHeader=Show Header",
+                            value = bind "nonCSS.showHeader",
+                        },
+                    },
+                    f:content_section {
+                        f:checkbox_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Appearance/FloatingHeader=Floating Header",
+                            value = bind "nonCSS.floatingHeader",
+                            bindingEnabled = "nonCSS.showHeader",
+                        },
+                    },
+                },
+            },
+            outputSettings = f:panel_content {
+                bindToObject = controller,
+                f:subdivided_sections {
+                    f:header_section_label {
+                        title = LOC "$$$/AgWPG/Templates/HTML/Panel/Output/ImageHandling=Large Images",
+                    },
+                    f:slider_content_column {
+                        f:slider_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Output/JPEGQuality=Quality",
+                            value = bind "lightroomApplication.jpegQuality",
+                            tracking = bind "lightroomApplication.jpegQuality.tracking",
+                            tracking_value = "qualityTracking",
+                            unit = "",
+                            max = 100,
+                            min = 0,
+                            width_in_digits = 4,
+                            precision = 0,
+                        },
+                        f:metadataModeControl {
+                            value = useMultiBind and multibind {
+                                "photoSizes.thumb.metadataExportMode",
+                                "photoSizes.large.metadataExportMode",
+                            }
+                            or bind "photoSizes.thumb.metadataExportMode",
+                        },
+                    },
+                    f:watermark_section( controller ),
+                },
+                f:subdivided_sections {
+                    f:header_section {
+                        ui.popup_row {
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Output/Sharpening=Sharpening:", 
+                            checkbox = {
+                                bindingValue = "lightroomApplication.outputSharpeningOn",
+                            },
+                            bindingValue = "lightroomApplication.outputSharpening",
+                            items = { { title = LOC( "$$$/AgWPG/Templates/HTML/Panel/Output/SharpeningLow=Low" ), value = 1 }, 
+                                        { title = LOC( "$$$/AgWPG/Templates/HTML/Panel/Output/SharpeningStandard=Standard" ), value = 2 }, 
+                                        { title = LOC( "$$$/AgWPG/Templates/HTML/Panel/Output/SharpeningHigh=High" ), value = 3 } },
+                            bindingEnabled = "lightroomApplication.outputSharpeningOn",
+                        },
+                    },
+                    f:content_section {
+                        margin_left = 30,
+                        f:static_text {
+                            fill_horizontal = 1,
+                            title = LOC "$$$/AgWPG/Templates/HTML/Panel/Output/SharpeningMessage=Sharpening is applied on output.",
+                            font = warningFont,
+                        },
+                    },
+                },
+            },
+        }
+    end,
+    
+}
