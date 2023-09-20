@@ -9,10 +9,10 @@
         <title>$model.metadata.galleryTitle.value</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" type="text/css" href="assets/css/normalize.css">
-        <link rel="stylesheet" type="text/css" href="assets/css/main.css">
-        <link rel="stylesheet" type="text/css" media="screen" title="Custom Settings" href="assets/css/custom.css" >
-        <script src="assets/js/libs/modernizr.custom.23122.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../css/normalize.css">
+        <link rel="stylesheet" type="text/css" href="../../css/main.css">
+        <link rel="stylesheet" type="text/css" media="screen" title="Custom Settings" href="../../css/custom.css" >
+        <script src="../../js/modernizr.custom.23122.js"></script>
         <style type="text/css">
             a{
               font-size: 15px;
@@ -22,7 +22,7 @@
     </head>
     <body class="<% if model.nonCSS.showHeader then %>has-header<% end %> row-spacing-$model.metadata.rowSpacing.value" data-pagination-style="$model.nonCSS.pagination" data-target-row-height="$model.metadata.rowHeight.value">
         <% if mode=="preview" then %>
-        <script  type="text/javascript" src="assets/js/live_update.js"></script>
+        <script  type="text/javascript" src="../../js/live_update.js"></script>
         <% end %>
         <% if model.nonCSS.showHeader then %>
         <header class="<% if model.nonCSS.floatingHeader then %>is-fixed<% end %>">
@@ -144,8 +144,8 @@
             ]
         </script>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="assets/js/libs/jquery-1.10.2.min.js"><\/script>')</script>
-        <script src="assets/js/libs/jquery.velocity.min.js"></script>
-        <script src="assets/js/main.js"></script>
+        <script>window.jQuery || document.write('<script src="../../js/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="../../js/jquery.velocity.min.js"></script>
+        <script src="../../js/main.js"></script>
     </body>
 </html>
