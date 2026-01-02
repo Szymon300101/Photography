@@ -420,6 +420,8 @@ textarea {
 .gallery-box img {
     -webkit-transition: all 300ms ease-in-out;
     transition: all 300ms ease-in-out;
+    width:100%;
+    aspect-ratio: 3/2;
 }
 
 .no-gutter > [class*=col-] {
